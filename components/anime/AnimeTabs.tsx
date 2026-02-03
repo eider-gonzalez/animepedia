@@ -6,6 +6,7 @@ import OverviewTab from "./tabs/OverviewTab"
 import EpisodesTab from "./tabs/EpisodesTab"
 import RelationsTab from "./tabs/RelationsTab"
 import { Anime } from "@/types"
+import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes"
 
 const tabs = [
   { id: "overview", label: "General" },
@@ -15,8 +16,7 @@ const tabs = [
 
 function AnimeTabs({ anime }: { anime: Anime }) {
   const [activeTab, setActiveTab] = useState("overview")
-
-  console.log(anime)
+  const { data: episodes, isLoading: epLoading } = useAnimeEpisodes(anime.title.romaji);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -46,7 +46,7 @@ function AnimeTabs({ anime }: { anime: Anime }) {
       {/* Tab Content */}
       <div className="py-8">
         {activeTab === "overview" && <OverviewTab anime={anime} />}
-        {activeTab === "episodes" && <EpisodesTab episodes={anime.episodes} />}
+        {activeTab === "episodes" && (<EpisodesTab episodes={episodes || []} loading={epLoading} duration={anime.duration || 0} />)}
         {activeTab === "relations" && <RelationsTab related={anime.relations?.edges || []} />}
       </div>
     </div>

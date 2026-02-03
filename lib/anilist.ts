@@ -1,5 +1,5 @@
 // lib/anilist.ts
-import { Anime } from "@/types/anilist";
+import { Anime } from "@/types";
 
 export async function getTrendingAnime(): Promise<Anime[]> {
   const query = `

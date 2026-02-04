@@ -1,6 +1,7 @@
 // lib/anilist.ts
 import { Anime } from "@/types";
 
+// Obtener datos de animes en tendencia
 export async function getTrendingAnime(): Promise<Anime[]> {
   const query = `
     query {
@@ -31,6 +32,7 @@ export async function getTrendingAnime(): Promise<Anime[]> {
   return json.data.Page.media as Anime[];
 }
 
+// Obtener datos de animes de una temporada
 export async function getSeasonAnime(): Promise<Anime[]> {
   const query = `
     query ($season: MediaSeason, $year: Int) {
@@ -81,6 +83,7 @@ export async function getSeasonAnime(): Promise<Anime[]> {
   return json.data.Page.media as Anime[];
 }
 
+// Obtener datos de animes destacados
 export async function getFeaturedAnime(): Promise<Anime> {
   const query = `
     query {
@@ -112,6 +115,7 @@ export async function getFeaturedAnime(): Promise<Anime> {
   return json.data.Page.media[0] as Anime;
 }
 
+// Buscar animes por título
 export async function searchAnime(query: string): Promise<Anime[]> {
   if (!query) return [];
 
@@ -144,6 +148,7 @@ export async function searchAnime(query: string): Promise<Anime[]> {
   return json.data.Page.media as Anime[];
 }
 
+// Obtener datos de un anime por su ID
 export async function getAnimeById(id: number): Promise<Anime> {
   const query = `
     query ($id: Int) {
@@ -215,6 +220,45 @@ export async function getAnimeById(id: number): Promise<Anime> {
               coverImage {
                 large
               }
+            }
+          }
+        }
+        staff {
+          edges {
+            role
+            node {
+              id
+              name {
+                full
+                native
+                userPreferred
+              }
+              language
+              image {
+                large
+              }
+            }
+          }
+        }
+        characters {
+          edges {
+            role
+            node {
+              id
+              name {
+                full
+                native
+              }
+              image {
+                large
+              }
+            }
+            voiceActors {
+              id
+              name {
+                full
+              }
+              languageV2
             }
           }
         }

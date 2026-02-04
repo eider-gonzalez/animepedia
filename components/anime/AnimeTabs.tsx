@@ -7,11 +7,15 @@ import EpisodesTab from "./tabs/EpisodesTab"
 import RelationsTab from "./tabs/RelationsTab"
 import { Anime } from "@/types"
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes"
+import StaffTab from "./tabs/StaffTab"
+import CharactersTab from "./tabs/CharactersTab"
 
 const tabs = [
   { id: "overview", label: "General" },
   { id: "episodes", label: "Episodios" },
   { id: "relations", label: "Relaciones" },
+  { id: "characters", label: "Personajes" },
+  { id: "staff", label: "Staff" },
 ]
 
 function AnimeTabs({ anime }: { anime: Anime }) {
@@ -47,7 +51,9 @@ function AnimeTabs({ anime }: { anime: Anime }) {
       <div className="py-8">
         {activeTab === "overview" && <OverviewTab anime={anime} />}
         {activeTab === "episodes" && (<EpisodesTab episodes={episodes || []} loading={epLoading} duration={anime.duration || 0} />)}
-        {activeTab === "relations" && <RelationsTab related={anime.relations?.edges || []} />}
+        {activeTab === "relations" && <RelationsTab related={anime.relations.edges} />}
+        {activeTab === "characters" && <CharactersTab characters={anime.characters.edges} />}
+        {activeTab === "staff" && <StaffTab staff={anime.staff.edges} />}
       </div>
     </div>
   )

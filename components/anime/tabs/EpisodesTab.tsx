@@ -25,8 +25,6 @@ function EpisodesList({
       ep.number.toString().includes(searchTerm)
   )
 
-  console.log(episodes)
-
   return (
     <div className="space-y-6">
       {/* Search + Stats */}
@@ -63,14 +61,14 @@ function EpisodesList({
                 <div className="flex-1 min-w-0">
                   <h4
                     className="font-medium text-lg text-card-foreground truncate"
-                    title={episode.title || ""}
+                    title={episode.title || undefined}
                   >
                     {episode.title || "Titulo no disponible"}
                   </h4>
 
                   <div className="flex flex-wrap items-center gap-4 mt-1 text-sm text-muted-foreground">
                     {episode.airdate && (
-                      <span className="text-white">{new Date(episode.airdate).toLocaleDateString()}</span>
+                      <span className="text-white">{new Date(episode.airdate).toLocaleDateString() || "-"}</span>
                     )}
                     <span className="flex items-center gap-1 text-white">
                       <Clock className="h-3 w-3" />

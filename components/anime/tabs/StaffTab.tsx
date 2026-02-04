@@ -8,14 +8,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { AnimeTabsProps } from "@/types"
+import { Anime } from "@/types"
 
-interface StaffTabProps {
-  staff: AnimeTabsProps["anime"]["staff"]
-}
+function StaffTab({ staff }: { staff: Anime["staff"]["edges"] }) {
+  const staffPrincipales = staff?.filter((persona) =>
+    ["Director", "Art Director", "Original Creator", "Sound Director", "Character Design", "Music ", "Chief Director", "Script", "Series Composition"].includes(persona.role)
+  )
 
-
-function StaffTab({ staff }: StaffTabProps) {
   return (
     <div className="space-y-6">
       <div>
@@ -26,26 +25,27 @@ function StaffTab({ staff }: StaffTabProps) {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {staff.map((person) => (
-          <HoverCard key={person.id} openDelay={200}>
+        {staffPrincipales?.map((persona) => (
+          <HoverCard key={persona.node.id} openDelay={200}>
             <HoverCardTrigger asChild>
               <Card className="border-border bg-card hover:ring-2 hover:ring-primary transition-all cursor-pointer">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="relative h-16 w-16 overflow-hidden rounded-full ring-2 ring-border shrink-0">
                       <Image
-                        src={person.image || "/placeholder.svg"}
-                        alt={person.name}
+                        src={persona.node.image.large || "/placeholder.svg"}
+                        alt={persona.node.name.userPreferred}
                         fill
+                        sizes="(min-width: 1024px) 16vw, (min-width: 768px) 22vw, 45vw"
                         className="object-cover"
                       />
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-medium text-card-foreground truncate">
-                        {person.name}
+                        {persona.node.name.userPreferred}
                       </h4>
                       <Badge variant="secondary" className="text-xs mt-1">
-                        {person.role}
+                        {persona.role}
                       </Badge>
                     </div>
                   </div>
@@ -56,25 +56,19 @@ function StaffTab({ staff }: StaffTabProps) {
               <div className="flex gap-4">
                 <div className="relative h-20 w-20 overflow-hidden rounded-lg shrink-0">
                   <Image
-                    src={person.image || "/placeholder.svg"}
-                    alt={person.name}
+                    src={persona.node.image.large || "/placeholder.svg"}
+                    alt={persona.node.name.userPreferred}
                     fill
+                    sizes="(min-width: 1024px) 16vw, (min-width: 768px) 22vw, 45vw"
                     className="object-cover"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-semibold text-popover-foreground">{person.name}</h4>
-                  <p className="text-sm text-primary mb-2">{person.role}</p>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Otros trabajos:</p>
-                    <ul className="text-xs text-popover-foreground">
-                      {person.otherWorks.slice(0, 3).map((work) => (
-                        <li key={work} className="truncate">
-                          {work}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <h4 className="font-semibold text-popover-foreground">{persona.node.name.userPreferred}</h4>
+                  <p className="text-sm text-primary mb-2">{persona.role}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {persona.node.language}
+                  </p>
                 </div>
               </div>
             </HoverCardContent>

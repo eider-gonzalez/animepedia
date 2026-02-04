@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Anime } from "@/types"
 
 
-function RelationsTab({ related }: { related: NonNullable<Anime["relations"]>["edges"] }) {
+function RelationsTab({ related }: { related: Anime["relations"]["edges"] }) {
   // Group by relation type
   const filtered = related.filter((edge) =>
     ["PREQUEL", "SEQUEL", "SIDE_STORY", "SPIN_OFF", "ALTERNATIVE", ].includes(

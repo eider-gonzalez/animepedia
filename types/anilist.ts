@@ -31,7 +31,11 @@ export interface Anime {
   favourites?: number; // Favoritos
   description?: string; // Descripción
   duration?: number; // Duración en minutos
-  startDate?: number[]; // lista de [year, month, day]
+  startDate?: {
+    year: number;
+    month: number;
+    day: number;
+  };
   format?: string; // Formato de video
   studios?: { // Lista de studios
     nodes: {

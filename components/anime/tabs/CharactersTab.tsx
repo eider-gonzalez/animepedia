@@ -10,7 +10,7 @@ function CharactersTab({ characters }: { characters: Anime["characters"]["edges"
 
   const mapCharacter = {
     "MAIN": "Principal",
-    "SUPPORTING": "Apoyo",
+    "SUPPORTING": "Secundario",
   } as const;
 
   return (

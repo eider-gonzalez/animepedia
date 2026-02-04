@@ -91,7 +91,7 @@ function AnimeHero({ anime }: { anime: Anime }) {
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xl font-bold text-foreground">#{anime.popularity?.toLocaleString()}</p>
+                  <p className="text-xl font-bold text-foreground">{anime.popularity?.toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground">Popularidad</p>
                 </div>
               </div>

@@ -237,6 +237,18 @@ export async function getAnimeById(id: number): Promise<Anime> {
               image {
                 large
               }
+              staffMedia(sort: POPULARITY_DESC, perPage: 4) {
+                nodes {
+                  id
+                  title {
+                    userPreferred
+                  }
+                  coverImage {
+                    medium
+                  }
+                  format
+                }
+              }
             }
           }
         }
@@ -260,6 +272,16 @@ export async function getAnimeById(id: number): Promise<Anime> {
               }
               languageV2
             }
+          }
+        }
+        stats {
+          statusDistribution {
+            status
+            amount
+          }
+          scoreDistribution {
+            score
+            amount
           }
         }
       }

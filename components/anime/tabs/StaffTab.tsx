@@ -9,11 +9,14 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { Anime } from "@/types"
+import { useParams } from "next/navigation"
 
 function StaffTab({ staff }: { staff: Anime["staff"]["edges"] }) {
   const staffPrincipales = staff?.filter((persona) =>
     ["Director", "Art Director", "Original Creator", "Sound Director", "Character Design", "Music ", "Chief Director", "Script", "Series Composition"].includes(persona.role)
   )
+  const params = useParams();
+  const id = Number(params.id);
 
   return (
     <div className="space-y-6">
@@ -67,8 +70,21 @@ function StaffTab({ staff }: { staff: Anime["staff"]["edges"] }) {
                   <h4 className="font-semibold text-popover-foreground">{persona.node.name.userPreferred}</h4>
                   <p className="text-sm text-primary mb-2">{persona.role}</p>
                   <p className="text-sm text-muted-foreground">
-                    {persona.node.language}
+                    {persona.node.languageV2}
                   </p>
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">Otros trabajos:</p>
+                    <ul className="text-xs text-popover-foreground">
+                      {persona.node.staffMedia.nodes
+                        .filter((work) => work.id !== id)
+                        .slice(0, 3)
+                        .map((work) =>
+                          <li key={work.id} className="truncate">
+                            {work.title.userPreferred}
+                          </li>
+                        )}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </HoverCardContent>

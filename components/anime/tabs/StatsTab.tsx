@@ -2,17 +2,13 @@
 
 import { Eye, CheckCircle, PauseCircle, XCircle, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AnimeTabsProps } from "@/types"
+import { Anime } from "@/types"
 
-interface StatsTabProps {
-  stats: AnimeTabsProps["anime"]["stats"]
-}
 
-function StatsTab({ stats }: StatsTabProps) {
-  const totalUsers =
-    stats.watching + stats.completed + stats.onHold + stats.dropped + stats.planToWatch
-  const totalScores = stats.scoreDistribution.reduce((acc, d) => acc + d.count, 0)
-  const maxCount = Math.max(...stats.scoreDistribution.map((d) => d.count))
+function StatsTab({ stats, anime }: { stats: Anime["stats"], anime: Anime }) {
+  const totalUsers = stats.statusDistribution.reduce((acc, d) => acc + d.amount, 0)
+  const totalScores = stats.scoreDistribution.reduce((acc, d) => acc + d.amount, 0)
+  const maxCount = Math.max(...stats.scoreDistribution.map((d) => d.amount))
 
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
@@ -24,38 +20,42 @@ function StatsTab({ stats }: StatsTabProps) {
     return num.toString()
   }
 
+  const ratedAllTime = anime.rankings?.find(
+    r => r.type === "RATED" && r.year === null
+  );
+
   const statusItems = [
     {
       label: "Viendo",
-      value: stats.watching,
+      value: stats.statusDistribution.find((d) => d.status === "CURRENT")?.amount || 0,
       icon: Eye,
       color: "text-blue-500",
       bgColor: "bg-blue-500",
     },
     {
       label: "Completado",
-      value: stats.completed,
+      value: stats.statusDistribution.find((d) => d.status === "COMPLETED")?.amount || 0,
       icon: CheckCircle,
       color: "text-green-500",
       bgColor: "bg-green-500",
     },
     {
       label: "En espera",
-      value: stats.onHold,
+      value: stats.statusDistribution.find((d) => d.status === "PAUSED")?.amount || 0,
       icon: PauseCircle,
       color: "text-yellow-500",
       bgColor: "bg-yellow-500",
     },
     {
       label: "Abandonado",
-      value: stats.dropped,
+      value: stats.statusDistribution.find((d) => d.status === "DROPPED")?.amount || 0,
       icon: XCircle,
       color: "text-red-500",
       bgColor: "bg-red-500",
     },
     {
       label: "Planea ver",
-      value: stats.planToWatch,
+      value: stats.statusDistribution.find((d) => d.status === "PLANNING")?.amount || 0,
       icon: Clock,
       color: "text-muted-foreground",
       bgColor: "bg-muted-foreground",
@@ -114,29 +114,32 @@ function StatsTab({ stats }: StatsTabProps) {
       <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle className="text-lg text-card-foreground">Distribucion de Puntuaciones</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {formatNumber(totalScores)} puntos
+            <span className="hidden sm:inline"> ({formatNumber(totalUsers)} usuarios)</span>
+          </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {stats.scoreDistribution
-              .sort((a, b) => b.score - a.score)
               .map((item) => {
-                const percentage = (item.count / totalScores) * 100
+                const percentage = (item.amount / totalScores) * 100
                 return (
                   <div key={item.score} className="flex items-center gap-4">
                     <div className="w-8 text-right">
-                      <span className="text-sm font-medium text-foreground">{item.score}</span>
+                      <span className="text-sm font-medium text-foreground">{(item.score / 10).toFixed(1)}</span>
                     </div>
                     <div className="flex-1 h-8 rounded-lg bg-secondary overflow-hidden">
                       <div
                         className="h-full bg-primary transition-all duration-500"
-                        style={{ width: `${(item.count / maxCount) * 100}%` }}
+                        style={{ width: `${(item.amount / maxCount) * 100}%` }}
                       />
                     </div>
                     <div className="w-16 text-right">
                       <span className="text-sm text-muted-foreground">{percentage.toFixed(1)}%</span>
                     </div>
                     <div className="w-20 text-right hidden sm:block">
-                      <span className="text-sm text-muted-foreground">{formatNumber(item.count)}</span>
+                      <span className="text-sm text-muted-foreground">{formatNumber(item.amount)}</span>
                     </div>
                   </div>
                 )
@@ -149,26 +152,26 @@ function StatsTab({ stats }: StatsTabProps) {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="border-border bg-card">
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-primary">9.1</p>
+            <p className="text-3xl font-bold text-primary">{anime.averageScore ? (anime.averageScore / 10).toFixed(1) : "N/A"}</p>
             <p className="text-sm text-muted-foreground mt-1">Puntuacion Media</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-foreground">#1</p>
+            <p className="text-3xl font-bold text-foreground">{ratedAllTime ? `#${ratedAllTime.rank}` : " — "}</p>
             <p className="text-sm text-muted-foreground mt-1">Ranking</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-foreground">#1</p>
+            <p className="text-3xl font-bold text-foreground">{anime.popularity?.toLocaleString()}</p>
             <p className="text-sm text-muted-foreground mt-1">Popularidad</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="p-6 text-center">
-            <p className="text-3xl font-bold text-foreground">4M</p>
-            <p className="text-sm text-muted-foreground mt-1">Miembros</p>
+            <p className="text-3xl font-bold text-foreground">{anime.favourites?.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground mt-1">Favoritos</p>
           </CardContent>
         </Card>
       </div>

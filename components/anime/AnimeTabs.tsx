@@ -9,6 +9,7 @@ import { Anime } from "@/types"
 import { useAnimeEpisodes } from "@/hooks/useAnimeEpisodes"
 import StaffTab from "./tabs/StaffTab"
 import CharactersTab from "./tabs/CharactersTab"
+import StatsTab from "./tabs/StatsTab"
 
 const tabs = [
   { id: "overview", label: "General" },
@@ -16,6 +17,7 @@ const tabs = [
   { id: "relations", label: "Relaciones" },
   { id: "characters", label: "Personajes" },
   { id: "staff", label: "Staff" },
+  { id: "stats", label: "Estadisticas" },
 ]
 
 function AnimeTabs({ anime }: { anime: Anime }) {
@@ -54,6 +56,7 @@ function AnimeTabs({ anime }: { anime: Anime }) {
         {activeTab === "relations" && <RelationsTab related={anime.relations.edges} />}
         {activeTab === "characters" && <CharactersTab characters={anime.characters.edges} />}
         {activeTab === "staff" && <StaffTab staff={anime.staff.edges} />}
+        {activeTab === "stats" && <StatsTab stats={anime.stats} anime={anime} />}
       </div>
     </div>
   )

@@ -77,9 +77,21 @@ export interface Anime {
           native: string;
           userPreferred: string;
         }
-        language: string;
+        languageV2: string;
         image: {
           large: string;
+        }
+        staffMedia: {
+          nodes: {
+            id: number;
+            title:{
+              userPreferred: string;
+            }
+            convertImage: {
+              medium: string;
+            }
+            format: string;
+          }[];
         }
       }
     }[];
@@ -104,6 +116,16 @@ export interface Anime {
         }
         languageV2: string;
       }[];
+    }[];
+  }
+  stats: { // Estadisticas
+    statusDistribution: {
+      status: string;
+      amount: number;
+    }[];
+    scoreDistribution: {
+      score: number;
+      amount: number;
     }[];
   }
 

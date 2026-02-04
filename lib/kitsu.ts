@@ -1,17 +1,18 @@
 import { KitsuEpisode, KitsuEpisodesResponse, KitsuSearchResponse } from "@/types";
+import { KITSU_API } from "./api";
 
+async function kitsuFetch(path: string) {
+  const res = await fetch(`${KITSU_API}${path}`);
+
+  if (!res.ok) throw new Error("Kitsu fetch error");
+
+  return res.json();
+}
 
 export async function getKitsuIdByTitle(title: string): Promise<string | null> {
-  const res = await fetch(
-    `https://kitsu.io/api/edge/anime?filter[text]=${encodeURIComponent(
-      title
-    )}&page[limit]=5`
+  const json: KitsuSearchResponse = await kitsuFetch(
+    `/anime?filter[text]=${encodeURIComponent(title)}&page[limit]=5`
   );
-
-  if (!res.ok) return null;
-
-  const json: KitsuSearchResponse = await res.json();
-
   return json.data[0]?.id ?? null;
 }
 
@@ -24,13 +25,9 @@ export async function getEpisodesFromKitsu(
   let hasMore = true;
 
   while (hasMore) {
-    const res = await fetch(
-      `https://kitsu.io/api/edge/anime/${kitsuId}/episodes?page[limit]=${limit}&page[offset]=${offset}`
+    const json: KitsuEpisodesResponse = await kitsuFetch(
+      `/anime/${kitsuId}/episodes?page[limit]=${limit}&page[offset]=${offset}`
     );
-
-    if (!res.ok) break;
-
-    const json: KitsuEpisodesResponse = await res.json();
 
     const episodes = json.data.map((ep) => ({
       id: ep.id,

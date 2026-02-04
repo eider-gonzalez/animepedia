@@ -1,5 +1,18 @@
 // lib/anilist.ts
 import { Anime } from "@/types";
+import { ANILIST_API } from "./api";
+
+async function anilistFetch(query: string, variables?: object) {
+  const res = await fetch(ANILIST_API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  if (!res.ok) throw new Error("AniList fetch error");
+
+  return res.json();
+}
 
 // Obtener datos de animes en tendencia
 export async function getTrendingAnime(): Promise<Anime[]> {
@@ -20,15 +33,7 @@ export async function getTrendingAnime(): Promise<Anime[]> {
     }
   `;
 
-  const res = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
-
-  if (!res.ok) throw new Error("AniList fetch error");
-
-  const json = await res.json();
+  const json = await anilistFetch(query);
   return json.data.Page.media as Anime[];
 }
 
@@ -71,15 +76,7 @@ export async function getSeasonAnime(): Promise<Anime[]> {
   else if (month <= 9) season = "SUMMER";
   else season = "FALL";
 
-  const res = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables: { season, year } }),
-  });
-
-  if (!res.ok) throw new Error("AniList fetch error");
-
-  const json = await res.json();
+  const json = await anilistFetch(query, { season, year });
   return json.data.Page.media as Anime[];
 }
 
@@ -102,16 +99,7 @@ export async function getFeaturedAnime(): Promise<Anime> {
     }
   `;
 
-  const res = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
-
-  if (!res.ok) throw new Error("AniList fetch error");
-
-  const json = await res.json();
-  // Traemos solo el primer anime
+  const json = await anilistFetch(query);
   return json.data.Page.media[0] as Anime;
 }
 
@@ -136,15 +124,7 @@ export async function searchAnime(query: string): Promise<Anime[]> {
     }
   `;
 
-  const res = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query: gql, variables: { search: query } }),
-  });
-
-  if (!res.ok) throw new Error("AniList search error");
-
-  const json = await res.json();
+  const json = await anilistFetch(gql, { search: query });
   return json.data.Page.media as Anime[];
 }
 
@@ -288,17 +268,6 @@ export async function getAnimeById(id: number): Promise<Anime> {
     }
   `;
 
-  const res = await fetch("https://graphql.anilist.co", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      query,
-      variables: { id },
-    }),
-  });
-
-  if (!res.ok) throw new Error("Error al obtener anime");
-
-  const json = await res.json();
+  const json = await anilistFetch(query, { id });
   return json.data.Media as Anime;
 }
